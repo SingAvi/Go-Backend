@@ -1,12 +1,12 @@
 package main
 
-
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/SingAvi/Go-Backend/controllers"
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
-	"net/http"
-	"github.com/SingAvi/Go-Backend/controllers"
 )
 
 
@@ -16,18 +16,19 @@ func main() {
 	uc := controllers.NewUserController(getSession())
 
 	router.GET("/user/:id", uc.GetUser)
-	router.POST("/user",uc.CreateUser)
-	r.DELETE("/user/:id",uc.DeleteUser)
+	router.POST("/user/add",uc.CreateUser)
+	router.DELETE("/user/:id",uc.DeleteUser)
 	http.ListenAndServe("localhost:9000", router)
 
 }
 
 func getSession() *mgo.Session{
 
-	session, error := mgo.Dial("mongodb://localhost:27107")
+	session, error := mgo.Dial("mongodb://localhost:27017")
 
 	if error != nil{
-		fmt.println("Error, session not started")
+		panic(error)
 	}
+	fmt.Printf("Server Running")
 	return session
 }
